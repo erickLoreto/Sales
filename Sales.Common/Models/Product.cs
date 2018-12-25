@@ -16,5 +16,10 @@
         public bool IsAbailable { get; set; }
 
         public DateTime PublishOn { get; set; }
+
+        public override string ToString()
+        {
+            return this.Description;
+        }
     }
 }
