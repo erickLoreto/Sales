@@ -5,6 +5,9 @@
              x:Class="Sales.Views.ProductsPage"
              BindingContext="{Binding Main, Source={StaticResource Locator}}"
              Title="{i18n:Translate Products}">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Icon="ic_action_add_circle" Command="{Binding AddProductCommand}"/>
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout
             BindingContext="{Binding Products}"
@@ -28,15 +31,21 @@
                                     Grid.Column="0"
                                     WidthRequest="100"
                                     Source="{Binding ImageFullPath}">
-                                    
+
                                 </Image>
-                                <Label
+                                <StackLayout
+                                    Grid.Column="1"      
+                                    VerticalOptions="Center">
+                                    <Label
                                     FontAttributes="Bold"
-                                    TextColor="Black"
-                                    Grid.Column="1"                                    
-                                    Text="{Binding Description}"
-                                    VerticalOptions="Center">                                    
-                                </Label>
+                                    TextColor="Black"                                                                  
+                                    Text="{Binding Description}">
+                                    </Label>
+                                    <Label                                                     
+                                    Text="{Binding Remarks}">
+                                    </Label>
+                                </StackLayout>
+
                                 <Label                                   
                                     TextColor="Black"
                                     Grid.Column="2"
@@ -48,8 +57,8 @@
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
-                
-                
+
+
             </ListView>
         </StackLayout>
     </ContentPage.Content>
