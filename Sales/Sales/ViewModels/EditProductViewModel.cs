@@ -1,34 +1,34 @@
 ﻿
-
 namespace Sales.ViewModels
 {
-    using System;
-    using System.Windows.Input;
+    using Common.Models;
     using GalaSoft.MvvmLight.Command;
-    using Helpers;
     using Plugin.Media;
     using Plugin.Media.Abstractions;
-    using Sales.Common.Models;
+    using Sales.Helpers;
     using Services;
+    using System.Linq;
+    using System.Windows.Input;
     using Xamarin.Forms;
 
-    public class AddProductViewModel : BaseViewModel
+    public class EditProductViewModel : BaseViewModel
     {
         #region Attributes
-
-        private MediaFile file;
+        private Product product;
+        private MediaFile file; 
         private ApiService apiService;
         private ImageSource imageSource;
         private bool isRunning;
         private bool isEnabled;
-
         #endregion
 
         #region Properties
-        public string Description { get; set; }
+        public Product Product
+        {
+            get { return this.product; }
+            set { this.SetValue(ref this.product, value); }
+        }
 
-        public string Price { get; set; }
-        public string Remarks { get; set; }
         public bool IsRunning
         {
             get { return this.isRunning; }
@@ -49,13 +49,13 @@ namespace Sales.ViewModels
         #endregion
 
         #region Constructors
-        public AddProductViewModel()
+        public EditProductViewModel(Product product)
         {
+            this.product = product;
             this.apiService = new ApiService();
             this.IsEnabled = true;
-            this.imageSource = "noproduct";
+            this.imageSource = product.ImageFullPath;
         }
-
         #endregion
 
         #region Commands
@@ -124,25 +124,16 @@ namespace Sales.ViewModels
 
         private async void Save()
         {
-            if (string.IsNullOrEmpty(this.Description))
-            {
-                await Application.Current.MainPage.DisplayAlert(
-                    Languages.Error, 
-                    Languages.DescriptionError, 
-                    Languages.Accept);
-                return;
-            }
-            if (string.IsNullOrEmpty(this.Price))
+            if (string.IsNullOrEmpty(this.Product.Description))
             {
                 await Application.Current.MainPage.DisplayAlert(
                     Languages.Error,
-                    Languages.PriceError,
+                    Languages.DescriptionError,
                     Languages.Accept);
                 return;
             }
-
-            var price = decimal.Parse(this.Price);
-            if (price <0)
+            
+            if (this.Product.Price < 0)
             {
                 await Application.Current.MainPage.DisplayAlert(
                     Languages.Error,
@@ -160,8 +151,8 @@ namespace Sales.ViewModels
                 this.IsRunning = false;
                 this.IsEnabled = true;
                 await Application.Current.MainPage.DisplayAlert(
-                    Languages.Error, 
-                    connection.Message, 
+                    Languages.Error,
+                    connection.Message,
                     Languages.Accept);
                 return;
             }
@@ -170,21 +161,13 @@ namespace Sales.ViewModels
             if (this.file != null)
             {
                 imageArray = FilesHelper.ReadFully(this.file.GetStream());
+                this.Product.ImageArray = imageArray;
             }
-
-            var product = new Product
-            {
-                Description = this.Description,
-                Price = price,
-                Remarks = this.Remarks,
-                ImageArray = imageArray,
-            };
-                                
 
             var url = Application.Current.Resources["UrlAPI"].ToString();
             var prefix = Application.Current.Resources["UrlPrefix"].ToString();
             var controller = Application.Current.Resources["UrlProductsController"].ToString();
-            var response = await this.apiService.Post(url, prefix, controller,product);
+            var response = await this.apiService.Put(url, prefix, controller, this.Product,this.Product.ProductId);
 
             if (!response.IsSuccess)
             {
@@ -200,14 +183,18 @@ namespace Sales.ViewModels
 
             var newProduct = (Product)response.Result;
             var productsViewModel = ProductsViewModel.GetInstance();
+            var oldProduct = productsViewModel.MyProducts.Where(p => p.ProductId == this.Product.ProductId).FirstOrDefault();
+            if (oldProduct != null)
+            {
+                productsViewModel.MyProducts.Remove(oldProduct);
+            }
+            
             productsViewModel.MyProducts.Add(newProduct);
             productsViewModel.RefreshList();
             this.IsRunning = false;
             this.IsEnabled = true;
             await Application.Current.MainPage.Navigation.PopAsync();
-
         }
-
         #endregion
     }
 }
