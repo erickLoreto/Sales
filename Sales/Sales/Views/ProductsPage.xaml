@@ -26,16 +26,19 @@
                                 <MenuItem Text="{i18n:Translate Delete}" Command="{Binding DeleteProductCommand}" IsDestructive="True"/>
                             </ViewCell.ContextActions>
                             <Grid>
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding EditProductCommand}"/>
+                                </Grid.GestureRecognizers>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="2*"/>
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <Image
                                     Grid.Column="0"
                                     WidthRequest="100"
                                     Source="{Binding ImageFullPath}">
-
                                 </Image>
                                 <StackLayout
                                     Grid.Column="1"      
@@ -49,7 +52,6 @@
                                     Text="{Binding Remarks}">
                                     </Label>
                                 </StackLayout>
-
                                 <Label                                   
                                     TextColor="Black"
                                     Grid.Column="2"
@@ -57,12 +59,15 @@
                                     Text="{Binding Price, StringFormat='{0:C2}' }"
                                     VerticalOptions="Center">
                                 </Label>
+                                <Image
+                                    Grid.Column="3"
+                                    Source="ic_chevron_right"
+                                    VerticalOptions="Center">                                    
+                                </Image>
                             </Grid>
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>
-
-
             </ListView>
         </StackLayout>
     </ContentPage.Content>
