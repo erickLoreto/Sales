@@ -2,8 +2,9 @@
 {
     using System.Windows.Input;
     using GalaSoft.MvvmLight.Command;
-    using Helpers;
-    using Services;    
+    using Helpers;    
+    using Services;
+    using Views;
     using Xamarin.Forms;
 
     public class LoginViewModel : BaseViewModel
@@ -98,9 +99,15 @@
                 await Application.Current.MainPage.DisplayAlert(Languages.Error, Languages.SomethingWrong, Languages.Accept);
                 return;
             }
+
+            Settings.TokenType = token.TokenType;
+            Settings.AccessToken = token.AccessToken;
+            Settings.IsRemembered = this.IsRemembered;
+
+            MainViewModel.GetInstance().Products = new ProductsViewModel();
+            Application.Current.MainPage = new ProductsPage();
             this.IsRunning = false;
             this.IsEnabled = true;
-            await Application.Current.MainPage.DisplayAlert("Ok", "fuck yeahh!!", Languages.Accept);
         }
         #endregion
     }
