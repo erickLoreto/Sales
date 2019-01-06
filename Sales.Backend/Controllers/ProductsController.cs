@@ -1,15 +1,15 @@
 ﻿namespace Sales.Backend.Controllers
 {
+    using Backend.Helpers;
+    using Common.Models;
+    using Models;
     using System.Data.Entity;
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
     using System.Web.Mvc;
-    using Models;
-    using Common.Models;
-    using Backend.Helpers;
-    using System;
 
+    [Authorize]
     public class ProductsController : Controller
     {
         private LocalDataContext db = new LocalDataContext();
