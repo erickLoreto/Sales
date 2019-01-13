@@ -112,7 +112,7 @@ namespace Sales.ViewModels
             productsViewModel.RefreshList();
             this.IsRunning = true;
             this.IsEnabled = false;
-            await Application.Current.MainPage.Navigation.PopAsync();
+            await App.Navigator.PopAsync();
         }
 
         public ICommand ChangeImageCommand
@@ -247,7 +247,7 @@ namespace Sales.ViewModels
             productsViewModel.RefreshList();
             this.IsRunning = false;
             this.IsEnabled = true;
-            await Application.Current.MainPage.Navigation.PopAsync();
+            await App.Navigator.PopAsync();
         }
         #endregion
     }
